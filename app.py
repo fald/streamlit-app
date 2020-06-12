@@ -8,7 +8,7 @@ import pydeck as pdk
 # CONFIG
 #########
 DATA_URL = "./Motor_Vehicle_Collisions_-_Crashes.csv"
-NROWS = 1500
+NROWS = 1000
 
 
 def display_intro():
@@ -60,7 +60,33 @@ if __name__ == "__main__":
     hour = st.slider("Hour", 0, 23)
     result_when = data[data['date/time'].dt.hour == hour]
     st.markdown("Collisions between %i:00 and %i:00" % (hour, (hour + 1) % 24))
-    st.write("\tNumber of cases: " + str(len(result_when.index)))
+    num_results = len(result_when.index)
+    st.write("\tNumber of cases: " + str(num_results))
+    mid_point = (np.average(result_when['latitude']), np.average(result_when['longitude'])) if num_results > 0 else (0, 0)
+    
+    st.write(result_when)    
+    
+    st.write(pdk.Deck(
+        #map_style="mapbox://styles/mapbox/light-v9",
+        initial_view_state={
+            "latitude": mid_point[0],
+            "longitude": mid_point[1],
+            "zoom": 11,
+            "pitch": 50
+        },
+        layers = [
+            pdk.Layer(
+                "HexagonLayer",
+                data=result_when[['date/time', 'latitude', 'longitude']],
+                get_position=['longitude', 'latitude'],
+                radius=100,
+                extruded=True,
+                pickable=True,
+                elevation_scale=40,
+                elevation_range=[100, 200],
+            ),
+        ],
+    ))
     
     
     
