@@ -2,12 +2,13 @@
 import pandas as pd
 import streamlit as st
 import numpy as np
+import pydeck as pdk
 
 #########
 # CONFIG
 #########
 DATA_URL = "./Motor_Vehicle_Collisions_-_Crashes.csv"
-NROWS = 150
+NROWS = 1500
 
 
 def display_intro():
@@ -48,9 +49,19 @@ if __name__ == "__main__":
         st.write(data)
         
     st.header("Where are the most people injured in NYC?")
-    injured_people = st.slider("Number of people injured in vehicle collisions", 0, 19)
-    st.map(data.query('number_of_persons_injured >= @injured_people'))
+    injured_people = st.slider("Number of people injured in an instance of vehicle collision", 0, 19)
+    # Strictly speaking, it doesn't seem like isolating the lat/lon is necessary for st.map
+    result_where = data.query('number_of_persons_injured >= @injured_people')[['latitude', 'longitude']] 
+    st.write("Number of cases: " + str(len(result_where.index)))
+    st.map(result_where)
     #st.write(data.columns.values)
+    
+    st.header("What time of day do most collisions occur?")
+    hour = st.slider("Hour", 0, 23)
+    result_when = data[data['date/time'].dt.hour == hour]
+    st.markdown("Collisions between %i:00 and %i:00" % (hour, (hour + 1) % 24))
+    st.write("\tNumber of cases: " + str(len(result_when.index)))
+    
     
     
     
