@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 import pydeck as pdk
+import plotly.express as px
 
 #########
 # CONFIG
@@ -88,7 +89,13 @@ if __name__ == "__main__":
         ],
     ))
     
+    st.subheader("Breakdown by minute between %i:00 and %i:00" % (hour, (hour + 1) % 24))
+    hist = np.histogram(result_when['date/time'].dt.minute, bins=60, range=(0, 60))[0]
+    chart_data = pd.DataFrame({'minute':range(60), 'crashes':hist})
     
+    fig = px.bar(chart_data, x='minute', y='crashes',
+                 hover_data=['minute', 'crashes'], height=400)
+    st.write(fig)
     
     
     
