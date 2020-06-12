@@ -7,7 +7,7 @@ import numpy as np
 # CONFIG
 #########
 DATA_URL = "./Motor_Vehicle_Collisions_-_Crashes.csv"
-NROWS = 10
+NROWS = 150
 
 
 def display_intro():
@@ -17,7 +17,7 @@ def display_intro():
     
     st.title(title)
     st.markdown("## " + subtitle)
-    st.markdown("#### " + credit)
+    st.markdown("#### " + credit + "\n#")
 
 
 @st.cache(persist=True)
@@ -31,6 +31,10 @@ def load_data(nrows):
     
     lowercase = lambda x: str(x).lower()
     data.rename(lowercase, axis='columns', inplace=True)
+
+    cols = data.columns
+    cols = cols.map(lambda x: x.replace(' ', '_'))
+    data.columns = cols
     
     return data
     
@@ -39,7 +43,14 @@ if __name__ == "__main__":
     display_intro()
     data = load_data(NROWS)
     
-    
+    if st.checkbox("Show raw data"):
+        st.subheader("Raw Data")
+        st.write(data)
+        
+    st.header("Where are the most people injured in NYC?")
+    injured_people = st.slider("Number of people injured in vehicle collisions", 0, 19)
+    st.map(data.query('number_of_persons_injured >= @injured_people'))
+    #st.write(data.columns.values)
     
     
     
