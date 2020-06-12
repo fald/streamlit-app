@@ -98,6 +98,14 @@ if __name__ == "__main__":
     st.write(fig)
     
     
+    st.header("Top 5 anime betrayal streets")
+    select = st.selectbox("Group", ['pedestrians', 'cyclist', 'motorist'])
+    query_term = "number_of_" + select + "_injured"
+    st.write(
+        data.query("%s >= 1" % query_term)[['on_street_name', query_term]]
+        .sort_values(by=[query_term], ascending=False)
+        .dropna(how='any')[:5]
+    )
     
     
     
