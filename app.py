@@ -20,6 +20,10 @@ def display_intro():
     st.title(title)
     st.markdown("## " + subtitle)
     st.markdown("#### " + credit + "\n#")
+    
+    if st.checkbox("Show raw data"):
+        st.subheader("Raw Data")
+        st.write(data)
 
 
 @st.cache(persist=True)
@@ -45,9 +49,7 @@ if __name__ == "__main__":
     display_intro()
     data = load_data(NROWS)
     
-    if st.checkbox("Show raw data"):
-        st.subheader("Raw Data")
-        st.write(data)
+
         
     st.header("Where are the most people injured in NYC?")
     injured_people = st.slider("Number of people injured in an instance of vehicle collision", 0, 19)
